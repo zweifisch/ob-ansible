@@ -1,0 +1,31 @@
+* ob-ansible
+
+ansible ad-hoc commands in org-mode babel(or better devops with org-mode)
+
+** supported header arguments
+
+- inventory
+- hosts
+- user
+- become
+- forks
+
+** examples
+
+*** inventory
+
+: #+NAME: hosts
+: : [web]
+: : 10.1.0.13
+: : 10.1.0.23
+: : 10.1.0.33
+:
+: #+BEGIN_SRC ansible :inventory hosts :hosts web[0]
+: systemctl status nginx
+: #+END_SRC
+
+*** specify module
+
+: #+BEGIN_SRC ansible :module yum
+: name=httpd state=present
+: #+END_SRC
