@@ -8,7 +8,10 @@ ansible ad-hoc commands in org-mode babel(or better devops with org-mode)
 - hosts
 - user
 - become
+- become-user
 - forks
+- module
+- playbook
 
 ** examples
 
@@ -28,4 +31,13 @@ ansible ad-hoc commands in org-mode babel(or better devops with org-mode)
 
 : #+BEGIN_SRC ansible :module yum
 : name=httpd state=present
+: #+END_SRC
+
+*** playbook
+
+: #+BEGIN_SRC ansible :playbook
+: - hosts: all
+:   tasks:
+:   - name: ensure apache2 installed
+:     package: name=apaache2 state=present
 : #+END_SRC
