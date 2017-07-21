@@ -9,6 +9,19 @@
 ;; Package-Requires: ((org "8"))
 ;; Created: 28th Sep 2015
 
+;; This file is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation; either version 3, or (at your option)
+;; any later version.
+
+;; This file is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 ;;; Commentary:
 ;;
 ;; ansible ad-hoc commands in org-mode babel(or better devops with org-mode)
@@ -23,6 +36,7 @@
     (forks . :any)
     (user . :any)
     (become . :any)
+    (oneline . :any)
     (become-user . :any))
   "ansible header arguments")
 
@@ -30,10 +44,11 @@
   (let* ((inventory (org-babel-ref-resolve
                      (cdr (assoc :inventory params))))
          (inventory-file (org-babel-temp-file "ob-ansible-inventory"))
-         (module (or (cdr (assoc :module params)) "command"))
+         (module (or (cdr (assoc :module params)) "shell"))
          (hosts (or (cdr (assoc :hosts params)) "all"))
          (forks (cdr (assoc :forks params)))
-         (user (cdr (assoc :user params)))
+         (user (or (cdr (assoc :user params)) "root"))
+         (oneline (assoc :oneline params))
          (become (assoc :become params))
          (become-user (cdr (assoc :become-user params)))
          (playbook (assoc :playbook params))
@@ -53,7 +68,7 @@
                       (format " \"%s\"" hosts)
                       args
                       " --module-name " module
-                      " --one-line"
+                      (when oneline " --one-line")
                       (format " --args \"%s\"" body)))))
        (with-current-buffer (get-buffer-create "*ansible commands history*")
          (goto-char (point-max))
