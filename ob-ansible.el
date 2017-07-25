@@ -69,7 +69,7 @@
                       args
                       " --module-name " module
                       (when oneline " --one-line")
-                      (format " --args \"%s\"" body)))))
+                      (format " --args %s" (shell-quote-argument body))))))
        (with-current-buffer (get-buffer-create "*ansible commands history*")
          (goto-char (point-max))
          (insert (concat cmd "\n")))
