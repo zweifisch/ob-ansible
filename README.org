@@ -24,13 +24,25 @@ ansible ad-hoc commands in org-mode babel(or better devops with org-mode)
 : : 10.1.0.33
 :
 : #+BEGIN_SRC ansible :inventory hosts :hosts web[0]
-: systemctl status nginx
+: uptime
 : #+END_SRC
 
 *** specify module
 
 : #+BEGIN_SRC ansible :module yum
 : name=httpd state=present
+: #+END_SRC
+
+*** code block as file
+
+: #+name: config.conf
+: #+BEGIN_EXAMPLE
+: [section]
+: key=value
+: #+END_EXAMPLE
+
+: #+BEGIN_SRC ansible :module copy
+: src=config.conf dest=/etc/config.conf
 : #+END_SRC
 
 *** playbook

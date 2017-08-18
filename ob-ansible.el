@@ -69,11 +69,29 @@
                       args
                       " --module-name " module
                       (when oneline " --one-line")
-                      (format " --args %s" (shell-quote-argument body))))))
+                      (format " --args %s" (shell-quote-argument
+                                            (org-babel-ansible--preprocess-inline-src body)))))))
        (with-current-buffer (get-buffer-create "*ansible commands history*")
          (goto-char (point-max))
          (insert (concat cmd "\n")))
        (shell-command-to-string cmd)))))
+
+(defun org-babel-ansible--preprocess-inline-src (body)
+  (if (string-match "\\(src[ \t]*[:=][ \t]*\\)\\([^ \t]+\\)" body)
+      (let ((begin (match-beginning 0))
+            (end (match-end 0))
+            (assign (match-string 1 body))
+            (src (match-string 2 body))
+            (resolved))
+        (condition-case ex
+            (setq resolved (org-babel-ref-resolve src))
+          ('error))
+        (if resolved
+            (let ((tmp (org-babel-temp-file "ob-ansible-file")))
+              (with-temp-file tmp (insert resolved))
+              (concat (substring body 0 begin) assign tmp (substring body end)))
+          body))
+    body))
 
 (provide 'ob-ansible)
 ;;; ob-ansible.el ends here
